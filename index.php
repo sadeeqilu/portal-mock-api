@@ -5,6 +5,41 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL & ~ E_NOTICE);
 session_start();
 
+//~ BOOTSTRAP Start
+$service_dir = "/nannodit/portal-mock-api";
+$log_dir = $service_dir.'/log';
+$config_dir = $service_dir.'/config';
+$views_dir = $service_dir.'/views';
+
+require $service_dir . "/vendor/autoload.php";
+
+//~ Service
+
+$service_config_array = (new \abcvyz\lib\config(
+    $config_dir.'/service_config.yaml',
+    []
+))->asArray();
+
+
+$otp_config_array = $service_config_array['otp'];
+
+
+//~ ~ Log 
+$log_config_params_array = array(
+    'name' => '',
+    'timezone' => 'Asia/Tashkent',
+    'captureSystemErrors'=> true,
+    'instance' => microtime(),
+    'extension' => '.log',
+    'path' => $log_dir.'/main'
+);
+$log_config_array = (new \abcvyz\lib\config(
+    $config_dir.'/log_v21_config.yaml',
+    $log_config_params_array
+))->asArray();
+
+$log = new \abcvyz\lib\logger_v21($log_config_array);
+
 
 if(!isset($_GET['pin'])){
     if(!isset($_GET['msisdn'])){
