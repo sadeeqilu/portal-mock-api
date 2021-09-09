@@ -13,8 +13,8 @@ $views_dir = $service_dir.'/views';
 
 require $service_dir . "/vendor/autoload.php";
 
-//~ Service
 
+//~ Service
 $service_config_array = (new \abcvyz\lib\config(
     $config_dir.'/service_config.yaml',
     []
@@ -54,6 +54,17 @@ if(!isset($_GET['pin'])){
        echo json_encode($response);
     }
     else{
+        if(preg_match($service_config_array['operator_number_regex'],$_GET['msisdn']) != 1){
+            $response = [
+                "result" => [
+                   "error" => [
+                       "msisdn is incorrect"
+                   ],
+                   "isSuccess" => false
+                ]
+               ];
+            echo json_encode($response);
+        }
         $otp = strval(rand(1000, 9999));
         $_SESSION['session_otp'] = $otp;
         $_SESSION['msisdn'] = $_GET['msisdn'];
@@ -95,6 +106,29 @@ else{
             ];
         echo json_encode($response);
     } else {
+        if(preg_match($service_config_array['otp_pin_regex'],$_GET['pin']) != 1){
+            $response = [
+                "result" => [
+                   "error" => [
+                       "pin is malformed"
+                   ],
+                   "isSuccess" => false
+                ]
+               ];
+            echo json_encode($response);
+        }
+        if(preg_match($service_config_array['otp_rid_regex'],$_GET['rid']) != 1){
+            $response = [
+                "result" => [
+                   "error" => [
+                       "rid is malformed"
+                   ],
+                   "isSuccess" => false
+                ]
+               ];
+            echo json_encode($response);
+        }
+
         unset($_SESSION['session_otp']);
         $token = rand(1,2);
         if($token == 1)
